@@ -13,7 +13,7 @@ public class BookViewModel extends AndroidViewModel {
 
   public BookViewModel(Application app) {
     super(app);
-    this.mRepository = new BookRepository(app);
+    this.mRepository = BookRepository.getInstance(app);
     this.mAllBooks = this.mRepository.getAllBooks();
   }
 

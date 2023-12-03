@@ -1,5 +1,6 @@
 package com.eacarey.badreads;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import com.eacarey.badreads.DB.AppDatabase;
@@ -10,11 +11,13 @@ public class Book {
   @PrimaryKey(autoGenerate = true)
   private int mBookId;
 
+  @NonNull
   private String mTitle;
+  @NonNull
   private String mAuthor;
   private int mPages;
 
-  public Book(String title, String author, int pages) {
+  public Book(@NonNull String title, @NonNull String author, int pages) {
     this.mTitle = title;
     this.mAuthor = author;
     this.mPages = pages;

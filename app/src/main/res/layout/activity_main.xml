@@ -6,5 +6,21 @@
   android:layout_height="match_parent"
   tools:context=".MainActivity">
 
+  <TextView
+    android:id="@+id/welcome_label"
+    android:layout_width="215dp"
+    android:layout_height="47dp"
+    android:gravity="center"
+    android:textSize="16sp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintVertical_bias="0.078"
+    />
+
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

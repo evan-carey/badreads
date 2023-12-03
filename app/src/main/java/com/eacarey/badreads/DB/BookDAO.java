@@ -21,6 +21,12 @@ public interface BookDAO {
   @Delete
   void delete(Book book);
 
-  @Query("SELECT * FROM books_table ORDER BY mAuthor ASC")
+  @Query("SELECT * FROM " + AppDatabase.BOOKS_TABLE + " ORDER BY mAuthor ASC")
   LiveData<List<Book>> getAllBooks();
+
+  @Query("SELECT * FROM " + AppDatabase.BOOKS_TABLE + " WHERE mBookId = :bookId")
+  LiveData<List<Book>> getBookById(int bookId);
+
+  @Query("SELECT * FROM " + AppDatabase.BOOKS_TABLE + " WHERE mTitle LIKE '%' || :search || '%' OR mAuthor LIKE '%' || :search || '%'")
+  LiveData<List<Book>> searchBooks(String search);
 }
