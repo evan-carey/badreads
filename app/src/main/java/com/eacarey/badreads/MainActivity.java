@@ -4,12 +4,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import com.eacarey.badreads.Models.BookViewModel;
 import com.eacarey.badreads.Models.UserViewModel;
 import com.eacarey.badreads.databinding.ActivityMainBinding;
 import com.eacarey.badreads.ui.login.LoginActivity;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,11 +24,11 @@ public class MainActivity extends AppCompatActivity {
 
   ActivityMainBinding binding;
 
-//  LoggedInUserView mUserViewModel;
-
-  private UserViewModel mUserViewModel1;
+  private UserViewModel mUserViewModel;
+  private BookViewModel mBookViewModel;
 
   private Button mAdminButton;
+  private AutoCompleteTextView mSearchBooksView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -31,14 +38,13 @@ public class MainActivity extends AppCompatActivity {
     binding = ActivityMainBinding.inflate(getLayoutInflater());
     setContentView(binding.getRoot());
 
-
-//    UserRepository loginRepository = UserRepository.getInstance(new LoginDataSource());
-    mUserViewModel1 = new ViewModelProvider(this).get(UserViewModel.class);
+    mUserViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+    mBookViewModel = new ViewModelProvider(this).get(BookViewModel.class);
 
     // bind Logout button
     final Button logoutButton = this.binding.logOutButton;
     logoutButton.setOnClickListener(v -> {
-      this.mUserViewModel1.logout();
+      this.mUserViewModel.logout();
       Intent intent = new Intent(MainActivity.this, LoginActivity.class);
       startActivityForResult(intent, LOGIN_ACTIVITY_REQUEST_CODE);
     });
@@ -49,12 +55,43 @@ public class MainActivity extends AppCompatActivity {
       Intent intent = AdminPageActivity.getIntent(getApplicationContext());
       startActivity(intent);
     });
+
+    // bind search
+    this.mSearchBooksView = binding.searchBooksAutocomplete;
+    // clear search placeholder on focus
+    this.mSearchBooksView.setOnFocusChangeListener((v, hasFocus) -> {
+      if (hasFocus) mSearchBooksView.setText("");
+    });
+    this.mBookViewModel.getAllBooks().observe(this, books -> {
+      // TODO: write custom ArrayAdapter so we can use Book objects (to search on title and author)
+      // https://stackoverflow.com/questions/16782288/autocompletetextview-with-custom-adapter-and-filter
+      List<String> bookStrings = books.stream().map(Book::getTitle).collect(Collectors.toList());
+      ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+          android.R.layout.simple_dropdown_item_1line, bookStrings);
+      this.mSearchBooksView.setAdapter(adapter);
+
+      this.mSearchBooksView.setOnItemSelectedListener(new OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+          String selected = parent.getItemAtPosition(position).toString();
+          mSearchBooksView.setText(selected);
+          // TODO: nav to BookDetail view
+
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+          // ignore
+        }
+      });
+
+    });
   }
 
   @Override
   protected void onStart() {
     super.onStart();
-    if (!mUserViewModel1.isLoggedIn()) {
+    if (!mUserViewModel.isLoggedIn()) {
 
 //      startActivity(LoginActivity.getIntent(getApplicationContext()));
 
@@ -63,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
     } else {
 
 //  this.mUserViewModel = new ViewModelProvider(this).get(LoggedInUserView.class);
-      User user = mUserViewModel1.getUser();
+      User user = mUserViewModel.getUser();
 
       binding.welcomeLabel.setText(
           String.format(getString(R.string.welcome_message), user.getUsername()));
