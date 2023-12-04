@@ -10,13 +10,13 @@ import com.eacarey.badreads.Repositories.UserRepository;
 import com.eacarey.badreads.User;
 import com.eacarey.badreads.data.Result;
 import com.eacarey.badreads.data.Result.Success;
-import com.eacarey.badreads.ui.login.LoginResult;
+import com.eacarey.badreads.data.AuthResult;
 import com.eacarey.badreads.ui.signup.SignUpFormState;
 
 public class SignUpViewModel extends AndroidViewModel {
 
   private MutableLiveData<SignUpFormState> mSignUpFormState = new MutableLiveData<>();
-    private MutableLiveData<LoginResult<User>> signUpResult = new MutableLiveData<>();
+    private MutableLiveData<AuthResult<User>> signUpResult = new MutableLiveData<>();
   private UserRepository mUserRepository;
 
   public SignUpViewModel(@NonNull Application application) {
@@ -28,16 +28,16 @@ public class SignUpViewModel extends AndroidViewModel {
     return mSignUpFormState;
   }
 
-  public LiveData<LoginResult<User>> getSignUpResult() { return signUpResult; }
+  public LiveData<AuthResult<User>> getSignUpResult() { return signUpResult; }
 
   public void signUp(String username, String password) {
     Result<User> result = mUserRepository.createUserAccount(username, password);
 
     if (result instanceof Result.Success) {
       User data = ((Success<User>) result).getData();
-      signUpResult.setValue(new LoginResult<>(data));
+      signUpResult.setValue(new AuthResult<>(data));
     } else {
-      signUpResult.setValue(new LoginResult<>(R.string.login_failed));
+      signUpResult.setValue(new AuthResult<>(R.string.login_failed));
     }
   }
 

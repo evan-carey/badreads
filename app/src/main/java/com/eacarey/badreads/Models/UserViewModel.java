@@ -9,12 +9,12 @@ import com.eacarey.badreads.Repositories.UserRepository;
 import com.eacarey.badreads.User;
 import com.eacarey.badreads.data.Result;
 import com.eacarey.badreads.ui.login.LoginFormState;
-import com.eacarey.badreads.ui.login.LoginResult;
+import com.eacarey.badreads.data.AuthResult;
 
 public class UserViewModel extends AndroidViewModel {
 
   private MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
-  private MutableLiveData<LoginResult<User>> loginResult = new MutableLiveData<>();
+  private MutableLiveData<AuthResult<User>> loginResult = new MutableLiveData<>();
   private UserRepository mUserRepository;
 
   public UserViewModel(Application app) {
@@ -26,7 +26,7 @@ public class UserViewModel extends AndroidViewModel {
     return loginFormState;
   }
 
-  public LiveData<LoginResult<User>> getLoginResult() {
+  public LiveData<AuthResult<User>> getLoginResult() {
     return loginResult;
   }
 
@@ -37,9 +37,9 @@ public class UserViewModel extends AndroidViewModel {
     if (result instanceof Result.Success) {
       User data = ((Result.Success<User>) result).getData();
       loginResult.setValue(
-          new LoginResult<>(new User(data.getUsername(), data.getPassword(), data.getIsAdmin())));
+          new AuthResult<>(new User(data.getUsername(), data.getPassword(), data.getIsAdmin())));
     } else {
-      loginResult.setValue(new LoginResult<>(R.string.login_failed));
+      loginResult.setValue(new AuthResult<>(R.string.login_failed));
     }
   }
 

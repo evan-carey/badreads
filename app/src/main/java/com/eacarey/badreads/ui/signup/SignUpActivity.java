@@ -18,7 +18,7 @@ import com.eacarey.badreads.Models.SignUpViewModel;
 import com.eacarey.badreads.R;
 import com.eacarey.badreads.User;
 import com.eacarey.badreads.databinding.ActivitySignUpBinding;
-import com.eacarey.badreads.ui.login.LoginResult;
+import com.eacarey.badreads.data.AuthResult;
 
 public class SignUpActivity extends AppCompatActivity {
   public static final String SIGN_UP_EXTRA_REPLY = "com.eacarey.badreads.SIGN_UP_REPLY";
@@ -61,20 +61,20 @@ public class SignUpActivity extends AppCompatActivity {
       }
     });
 
-    mSignUpViewModel.getSignUpResult().observe(this, new Observer<LoginResult<User>>() {
+    mSignUpViewModel.getSignUpResult().observe(this, new Observer<AuthResult<User>>() {
       @Override
-      public void onChanged(LoginResult<User> userLoginResult) {
-        if (userLoginResult == null) {
+      public void onChanged(AuthResult<User> userAuthResult) {
+        if (userAuthResult == null) {
           return;
         }
 
-        if (userLoginResult.getError() != null) {
-          showLoginFailed(userLoginResult.getError());
+        if (userAuthResult.getError() != null) {
+          showLoginFailed(userAuthResult.getError());
         }
-        if (userLoginResult.getSuccess() != null) {
+        if (userAuthResult.getSuccess() != null) {
 
           Intent replyIntent = new Intent();
-          replyIntent.putExtra(SIGN_UP_EXTRA_REPLY, userLoginResult.getSuccess());
+          replyIntent.putExtra(SIGN_UP_EXTRA_REPLY, userAuthResult.getSuccess());
           setResult(Activity.RESULT_OK, replyIntent);
           finish();
         }
