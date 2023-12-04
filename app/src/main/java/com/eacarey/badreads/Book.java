@@ -8,6 +8,7 @@ import java.util.Objects;
 
 @Entity(tableName = AppDatabase.BOOKS_TABLE)
 public class Book {
+
   @PrimaryKey(autoGenerate = true)
   private int mBookId;
 
@@ -15,21 +16,19 @@ public class Book {
   private String mTitle;
   @NonNull
   private String mAuthor;
-  private int mPages;
 
-  public Book(@NonNull String title, @NonNull String author, int pages) {
+  public Book(@NonNull String title, @NonNull String author) {
     this.mTitle = title;
     this.mAuthor = author;
-    this.mPages = pages;
   }
 
+  @NonNull
   @Override
   public String toString() {
     return "Book{" +
         "mBookId='" + mBookId + '\'' +
         "mTitle='" + mTitle + '\'' +
         ", mAuthor='" + mAuthor + '\'' +
-        ", mPages=" + mPages +
         '}';
   }
 
@@ -58,14 +57,6 @@ public class Book {
     mAuthor = author;
   }
 
-  public int getPages() {
-    return mPages;
-  }
-
-  public void setPages(int pages) {
-    mPages = pages;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -75,14 +66,12 @@ public class Book {
       return false;
     }
     Book book = (Book) o;
-    return getPages() == book.getPages() && Objects.equals(getTitle(), book.getTitle())
+    return Objects.equals(getTitle(), book.getTitle())
         && Objects.equals(getAuthor(), book.getAuthor());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getTitle(), getAuthor(), getPages());
+    return Objects.hash(getTitle(), getAuthor());
   }
-
-
 }

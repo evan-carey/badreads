@@ -29,4 +29,7 @@ public interface BookDAO {
 
   @Query("SELECT * FROM " + AppDatabase.BOOKS_TABLE + " WHERE mTitle LIKE '%' || :search || '%' OR mAuthor LIKE '%' || :search || '%'")
   LiveData<List<Book>> searchBooks(String search);
+
+  @Query("DELETE FROM " + AppDatabase.BOOKS_TABLE)
+  void deleteAll();
 }
