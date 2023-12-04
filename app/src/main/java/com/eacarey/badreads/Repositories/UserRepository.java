@@ -91,6 +91,11 @@ public class UserRepository {
 //    return result;
   }
 
+  public Result<User> createUserAccount(String username, String password) {
+    this.mUserDAO.insert(new User(username, password, false));
+    return this.login(username, password);
+  }
+
   public LiveData<List<User>> getAllUsers() {
     return this.mUserDAO.getAllUsers();
   }
@@ -99,7 +104,7 @@ public class UserRepository {
     return this.mUserDAO.getUserById(userId);
   }
 
-  public LiveData<User> getUserByUsername(String username) {
+  public User getUserByUsername(String username) {
     return this.mUserDAO.getUserByUsername(username);
   }
 

@@ -28,7 +28,7 @@ public interface UserDAO {
   LiveData<User> getUserById(int userId);
 
   @Query("SELECT * FROM " + AppDatabase.USERS_TABLE + " WHERE mUsername = :username LIMIT 1")
-  LiveData<User> getUserByUsername(String username);
+  User getUserByUsername(String username);
 
   @Query("SELECT * FROM " + AppDatabase.USERS_TABLE + " WHERE mUsername = :username AND mPassword = :password LIMIT 1")
   User getUserByUsernamePassword(String username, String password);

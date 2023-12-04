@@ -21,11 +21,15 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import com.eacarey.badreads.Models.UserViewModel;
 import com.eacarey.badreads.R;
+import com.eacarey.badreads.User;
 import com.eacarey.badreads.databinding.ActivityLoginBinding;
+import com.eacarey.badreads.ui.signup.SignUpActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
-  public static final String EXTRA_REPLY = "com.eacarey.badreads.LOGIN_REPLY";
+  public static final String LOGIN_EXTRA_REPLY = "com.eacarey.badreads.LOGIN_REPLY";
+
+  public static final int SIGN_UP_ACTIVITY_REQUEST_CODE = 1;
 
   //  private LoginViewModel loginViewModel;
   private ActivityLoginBinding binding;
@@ -41,12 +45,10 @@ public class LoginActivity extends AppCompatActivity {
 
     mUserViewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
-//    loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
-//        .get(LoginViewModel.class);
-
     final EditText usernameEditText = binding.username;
     final EditText passwordEditText = binding.password;
     final Button loginButton = binding.login;
+    final Button signUpButton = binding.signUp;
     final ProgressBar loadingProgressBar = binding.loading;
 
     mUserViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
@@ -65,26 +67,23 @@ public class LoginActivity extends AppCompatActivity {
       }
     });
 
-    mUserViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
-      @Override
-      public void onChanged(@Nullable LoginResult loginResult) {
-        if (loginResult == null) {
-          return;
-        }
-        loadingProgressBar.setVisibility(View.GONE);
-        if (loginResult.getError() != null) {
-          showLoginFailed(loginResult.getError());
-        }
-        if (loginResult.getSuccess() != null) {
-          updateUiWithUser(loginResult.getSuccess());
+    mUserViewModel.getLoginResult().observe(this, loginResult -> {
+      System.out.println("login result change");
+      if (loginResult == null) {
+        return;
+      }
+      loadingProgressBar.setVisibility(View.GONE);
+      if (loginResult.getError() != null) {
+        showLoginFailed(loginResult.getError());
+      }
+      if (loginResult.getSuccess() != null) {
+        updateUiWithUser(loginResult.getSuccess());
 
-          Intent replyIntent = new Intent();
-          replyIntent.putExtra(EXTRA_REPLY, loginResult.getSuccess());
-          setResult(Activity.RESULT_OK, replyIntent);
-
-          //Complete and destroy login activity once successful
-          finish();
-        }
+        Intent replyIntent = new Intent();
+        replyIntent.putExtra(LOGIN_EXTRA_REPLY, loginResult.getSuccess());
+        setResult(Activity.RESULT_OK, replyIntent);
+        //Complete and destroy login activity once successful
+        finish();
       }
     });
 
@@ -127,10 +126,45 @@ public class LoginActivity extends AppCompatActivity {
             passwordEditText.getText().toString());
       }
     });
+
+    signUpButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+//        Intent intent = SignUpActivity.getIntent(getApplicationContext());
+//        startActivity(intent);
+        Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+        startActivityForResult(intent, SIGN_UP_ACTIVITY_REQUEST_CODE);
+      }
+    } );
   }
 
-  private void updateUiWithUser(LoggedInUserView model) {
-    String welcome = getString(R.string.welcome) + model.getDisplayName();
+  public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+
+    // return from SignUpActivity
+    if (requestCode == SIGN_UP_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+//      updateUiWithUser(loginResult.getSuccess());
+
+//      Intent replyIntent = new Intent();
+//      replyIntent.putExtra(LOGIN_EXTRA_REPLY, loginResult.getSuccess());
+//      setResult(Activity.RESULT_OK, replyIntent);
+
+      //Complete and destroy login activity once successful
+      System.out.println("onSignUpActivityResult: " + data.getParcelableExtra(SignUpActivity.SIGN_UP_EXTRA_REPLY));
+      finish();
+    }
+  }
+
+  @Override
+  protected void onStart() {
+    super.onStart();
+//    if (this.mUserViewModel.isLoggedIn()) {
+//      finish();
+//    }
+  }
+
+  private void updateUiWithUser(User model) {
+    String welcome = getString(R.string.welcome) + model.getUsername();
     // TODO : initiate successful logged in experience
     Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
   }

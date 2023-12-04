@@ -1,5 +1,7 @@
 package com.eacarey.badreads;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -7,7 +9,7 @@ import com.eacarey.badreads.DB.AppDatabase;
 import java.util.Objects;
 
 @Entity(tableName = AppDatabase.USERS_TABLE)
-public class User {
+public class User implements Parcelable {
 
   @PrimaryKey(autoGenerate = true)
   private int mUserId;
@@ -24,6 +26,25 @@ public class User {
     this.mPassword = password;
     this.isAdmin = isAdmin;
   }
+
+  protected User(Parcel in) {
+    mUserId = in.readInt();
+    mUsername = in.readString();
+    mPassword = in.readString();
+    isAdmin = in.readByte() != 0;
+  }
+
+  public static final Creator<User> CREATOR = new Creator<User>() {
+    @Override
+    public User createFromParcel(Parcel in) {
+      return new User(in);
+    }
+
+    @Override
+    public User[] newArray(int size) {
+      return new User[size];
+    }
+  };
 
   public String getUsername() {
     return this.mUsername;
@@ -80,5 +101,18 @@ public class User {
   @Override
   public int hashCode() {
     return Objects.hash(mUserId, getUsername());
+  }
+
+  @Override
+  public int describeContents() {
+    return 0;
+  }
+
+  @Override
+  public void writeToParcel(@NonNull Parcel dest, int flags) {
+    dest.writeInt(mUserId);
+    dest.writeString(mUsername);
+    dest.writeString(mPassword);
+    dest.writeByte((byte) (isAdmin ? 1 : 0));
   }
 }

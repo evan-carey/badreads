@@ -15,4 +15,10 @@
   <string name="welcome_message">"Welcome, %1$s!"</string>
   <string name="shared_preferences_username_key">com.eacarey.badreads.PREFERENCES_USERNAME_KEY</string>
   <string name="shared_preferences_password_key">com.eacarey.badreads.PREFERENCES_PASSWORD_KEY</string>
+  <string name="create_new_account">Create new account</string>
+  <string name="confirm_password">Confirm password</string>
+  <string name="create_account">Create account</string>
+  <string name="username_already_exists">Username not available</string>
+  <string name="passwords_dont_match">Passwords do not match</string>
+  <string name="log_out">Log out</string>
 </resources>

@@ -8,15 +8,17 @@ import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.eacarey.badreads.Book;
 import com.eacarey.badreads.User;
+import com.eacarey.badreads.UserBook;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Book.class, User.class}, version = 1)
+@Database(entities = {Book.class, User.class, UserBook.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
 
   public static final String DATABASE_NAME = "Badreads.DB";
   public static final String BOOKS_TABLE = "books_table";
   public static final String USERS_TABLE = "users_table";
+  public static final String USER_BOOKS_TABLE = "user_books_table";
 
   private static volatile AppDatabase instance;
 
@@ -26,6 +28,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
   public abstract BookDAO BookDAO();
   public abstract UserDAO UserDAO();
+  public abstract UserBookDAO UserBookDAO();
 
   public static AppDatabase getInstance(Context context) {
     if (instance == null) {
