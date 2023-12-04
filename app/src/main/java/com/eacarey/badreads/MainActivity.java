@@ -3,6 +3,7 @@ package com.eacarey.badreads;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -20,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
 
   private UserViewModel mUserViewModel1;
 
+  private Button mAdminButton;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -32,11 +35,19 @@ public class MainActivity extends AppCompatActivity {
 //    UserRepository loginRepository = UserRepository.getInstance(new LoginDataSource());
     mUserViewModel1 = new ViewModelProvider(this).get(UserViewModel.class);
 
+    // bind Logout button
     final Button logoutButton = this.binding.logOutButton;
     logoutButton.setOnClickListener(v -> {
       this.mUserViewModel1.logout();
       Intent intent = new Intent(MainActivity.this, LoginActivity.class);
       startActivityForResult(intent, LOGIN_ACTIVITY_REQUEST_CODE);
+    });
+
+    // bind Admin button
+    this.mAdminButton = binding.adminPageButton;
+    mAdminButton.setOnClickListener(v -> {
+      Intent intent = AdminPageActivity.getIntent(getApplicationContext());
+      startActivity(intent);
     });
   }
 
@@ -56,6 +67,10 @@ public class MainActivity extends AppCompatActivity {
 
       binding.welcomeLabel.setText(
           String.format(getString(R.string.welcome_message), user.getUsername()));
+
+      if (user.getIsAdmin()) {
+        this.mAdminButton.setVisibility(View.VISIBLE);
+      }
     }
   }
 

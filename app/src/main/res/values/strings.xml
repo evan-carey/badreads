@@ -21,4 +21,5 @@
   <string name="username_already_exists">Username not available</string>
   <string name="passwords_dont_match">Passwords do not match</string>
   <string name="log_out">Log out</string>
+  <string name="admin_page_button_text">Admin</string>
 </resources>
