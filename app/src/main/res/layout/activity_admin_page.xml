@@ -10,4 +10,28 @@
   android:paddingRight="@dimen/activity_horizontal_margin"
   tools:context=".AdminPageActivity">
 
+  <TextView
+    android:id="@+id/badreads_logo"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:fontFamily="serif-monospace"
+    android:gravity="center"
+    android:text="@string/badreads"
+    android:textSize="30sp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
+
+  <TextView
+    android:id="@+id/admin_page_label"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:text="TODO: Admin Page"
+    android:textSize="20sp"
+    android:layout_marginTop="36sp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/badreads_logo" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

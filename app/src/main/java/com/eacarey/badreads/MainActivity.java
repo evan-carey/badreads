@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
   private UserViewModel mUserViewModel;
   private BookViewModel mBookViewModel;
+  private BookDetailViewModel mBookDetailViewModel;
 
   private Button mAdminButton;
   private AutoCompleteTextView mSearchBooksView;
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     mUserViewModel = new ViewModelProvider(this).get(UserViewModel.class);
     mBookViewModel = new ViewModelProvider(this).get(BookViewModel.class);
+    mBookDetailViewModel = new ViewModelProvider(this).get(BookDetailViewModel.class);
 
     // bind Logout button
     final Button logoutButton = this.binding.logOutButton;
@@ -58,10 +60,12 @@ public class MainActivity extends AppCompatActivity {
 
     // bind search
     this.mSearchBooksView = binding.searchBooksAutocomplete;
-    // clear search placeholder on focus
+    // clear text on focus
     this.mSearchBooksView.setOnFocusChangeListener((v, hasFocus) -> {
       if (hasFocus) mSearchBooksView.setText("");
     });
+
+
     this.mBookViewModel.getAllBooks().observe(this, books -> {
       // TODO: write custom ArrayAdapter so we can use Book objects (to search on title and author)
       // https://stackoverflow.com/questions/16782288/autocompletetextview-with-custom-adapter-and-filter
@@ -75,8 +79,7 @@ public class MainActivity extends AppCompatActivity {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
           String selected = parent.getItemAtPosition(position).toString();
           mSearchBooksView.setText(selected);
-          // TODO: nav to BookDetail view
-
+          mBookDetailViewModel.selectBook(selected);
         }
 
         @Override
@@ -84,6 +87,15 @@ public class MainActivity extends AppCompatActivity {
           // ignore
         }
       });
+
+      // TODO: navigate to BookDetail activity
+//      this.mSearchBooksView.setOnItemClickListener((parent, view, position, id) -> {
+//        String selected = parent.getItemAtPosition(position).toString();
+//        mSearchBooksView.setText(selected);
+//        mBookDetailViewModel.selectBook(selected);
+//        Bundle bundle = new Bundle();
+//        getSupportFragmentManager().beginTransaction().setReorderingAllowed(true).add(R.id.book_detail_fragment_container_view, BookDetailFragment.class, bundle).commit();
+//      });
 
     });
   }
