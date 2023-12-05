@@ -41,6 +41,10 @@ public class BookRepository {
     return this.mBookDAO.searchBooks(search);
   }
 
+  public LiveData<Book> getBookByTitle(String title) {
+    return this.mBookDAO.getBookByTitle(title);
+  }
+
   public void insert(Book... books) {
     AppDatabase.databaseWriteExecutor.execute(() -> {
       mBookDAO.insert(books);

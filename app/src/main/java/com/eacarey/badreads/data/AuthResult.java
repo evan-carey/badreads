@@ -1,22 +1,22 @@
-package com.eacarey.badreads.ui.login;
+package com.eacarey.badreads.data;
 
 import androidx.annotation.Nullable;
 
 /**
  * Authentication result : success (user details) or error message.
  */
-public class LoginResult<T> {
+public class AuthResult<T> {
 
   @Nullable
   private T success;
   @Nullable
   private Integer error;
 
-  public LoginResult(@Nullable Integer error) {
+  public AuthResult(@Nullable Integer error) {
     this.error = error;
   }
 
-  public LoginResult(@Nullable T success) {
+  public AuthResult(@Nullable T success) {
     this.success = success;
   }
 
