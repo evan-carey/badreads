@@ -100,10 +100,11 @@ public abstract class AppDatabase extends RoomDatabase {
     Book redrising2 = new Book("Golden Son", "Pierce Brown");
     Book redrising3 = new Book("Morning Star", "Pierce Brown");
     Book neuromancer = new Book("Neuromancer", "William Gibson");
+    Book hitchhikers = new Book("The Hitchhiker's Guide to the Galaxy", "Douglas Adams");
 
     bookDAO.insert(wayOfKings, warbreaker, furiesOfCalderon, brokenEarth1, brokenEarth2,
         brokenEarth3, dune1, dune2, dune3, firstLaw1, firstLaw2, firstLaw3, locke, threeBody1,
         threeBody2, threeBody3, kingkiller1, kingkiller2, redrising1, redrising2, redrising3,
-        neuromancer);
+        neuromancer, hitchhikers);
   }
 }

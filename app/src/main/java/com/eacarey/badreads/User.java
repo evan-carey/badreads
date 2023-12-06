@@ -80,10 +80,7 @@ public class User implements Parcelable {
 
   @Override
   public String toString() {
-    return "User{" +
-        "mUserId=" + mUserId +
-        ", mUsername='" + mUsername + '\'' +
-        '}';
+    return this.mUsername;
   }
 
   @Override
