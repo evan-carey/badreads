@@ -33,10 +33,6 @@
     app:layout_constraintTop_toBottomOf="@id/badreads_logo"
     android:layout_marginTop="16dp"
     />
-<!--  <androidx.fragment.app.FragmentContainerView-->
-<!--    android:id="@+id/book_detail_fragment_container_view"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent" />-->
 
   <Button
     android:id="@+id/log_out_button"
@@ -65,6 +61,5 @@
     app:layout_constraintTop_toBottomOf="@id/welcome_label"
     android:layout_marginTop="32dp"
     />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

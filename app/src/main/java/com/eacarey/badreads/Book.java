@@ -25,11 +25,7 @@ public class Book {
   @NonNull
   @Override
   public String toString() {
-    return "Book{" +
-        "mBookId='" + mBookId + '\'' +
-        "mTitle='" + mTitle + '\'' +
-        ", mAuthor='" + mAuthor + '\'' +
-        '}';
+    return "\"" + this.getTitle() + "\" by " + this.getAuthor();
   }
 
   public int getBookId() {

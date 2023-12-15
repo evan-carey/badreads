@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
   private UserViewModel mUserViewModel;
   private BookViewModel mBookViewModel;
-  private BookDetailViewModel mBookDetailViewModel;
+//  private BookDetailViewModel mBookDetailViewModel;
 
   private Button mAdminButton;
   private AutoCompleteTextView mSearchBooksView;
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     mUserViewModel = new ViewModelProvider(this).get(UserViewModel.class);
     mBookViewModel = new ViewModelProvider(this).get(BookViewModel.class);
-    mBookDetailViewModel = new ViewModelProvider(this).get(BookDetailViewModel.class);
+//    mBookDetailViewModel = new ViewModelProvider(this).get(BookDetailViewModel.class);
 
     // bind Logout button
     final Button logoutButton = this.binding.logOutButton;
@@ -62,9 +62,10 @@ public class MainActivity extends AppCompatActivity {
     this.mSearchBooksView = binding.searchBooksAutocomplete;
     // clear text on focus
     this.mSearchBooksView.setOnFocusChangeListener((v, hasFocus) -> {
-      if (hasFocus) mSearchBooksView.setText("");
+      if (hasFocus) {
+        mSearchBooksView.setText("");
+      }
     });
-
 
     this.mBookViewModel.getAllBooks().observe(this, books -> {
       // TODO: write custom ArrayAdapter so we can use Book objects (to search on title and author)
@@ -78,8 +79,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
           String selected = parent.getItemAtPosition(position).toString();
-          mSearchBooksView.setText(selected);
-          mBookDetailViewModel.selectBook(selected);
+//          mSearchBooksView.setText(selected);
+//          mBookDetailViewModel.selectBook(selected);
+
+//          Intent intent = BookDetailActivity.getIntent(getApplicationContext());
+//          startActivity(intent);
         }
 
         @Override
@@ -89,13 +93,16 @@ public class MainActivity extends AppCompatActivity {
       });
 
       // TODO: navigate to BookDetail activity
-//      this.mSearchBooksView.setOnItemClickListener((parent, view, position, id) -> {
-//        String selected = parent.getItemAtPosition(position).toString();
+      this.mSearchBooksView.setOnItemClickListener((parent, view, position, id) -> {
+        String selected = parent.getItemAtPosition(position).toString();
 //        mSearchBooksView.setText(selected);
 //        mBookDetailViewModel.selectBook(selected);
+        Intent intent = BookDetailActivity.getIntent(getApplicationContext());
+        intent.putExtra("book_title", selected);
+        startActivity(intent);
 //        Bundle bundle = new Bundle();
 //        getSupportFragmentManager().beginTransaction().setReorderingAllowed(true).add(R.id.book_detail_fragment_container_view, BookDetailFragment.class, bundle).commit();
-//      });
+      });
 
     });
   }
