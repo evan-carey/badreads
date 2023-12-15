@@ -28,6 +28,12 @@ public interface UserBookDAO {
           "WHERE u.mUsername = :username AND ub.state = :state")
   LiveData<List<Book>> getUserBooksByState(String username, UserBookReadState state);
 
+  @Query(
+      "SELECT * FROM " + AppDatabase.USER_BOOKS_TABLE
+          + " WHERE bookId = :bookId AND userId = :userId"
+  )
+  LiveData<UserBook> getUserBook(int userId, int bookId);
+
   @Insert
   void insert(UserBook... userBooks);
 

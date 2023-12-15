@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
     // bind search
     this.mSearchBooksView = binding.searchBooksAutocomplete;
+    this.mSearchBooksView.setThreshold(1);
     // clear text on focus
     this.mSearchBooksView.setOnFocusChangeListener((v, hasFocus) -> {
       if (hasFocus) {
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         }
       });
 
-      // TODO: navigate to BookDetail activity
+      // when user selects a book from the search, navigate to the BookDetailActivity
       this.mSearchBooksView.setOnItemClickListener((parent, view, position, id) -> {
         String selected = parent.getItemAtPosition(position).toString();
 //        mSearchBooksView.setText(selected);
@@ -100,10 +101,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = BookDetailActivity.getIntent(getApplicationContext());
         intent.putExtra("book_title", selected);
         startActivity(intent);
-//        Bundle bundle = new Bundle();
-//        getSupportFragmentManager().beginTransaction().setReorderingAllowed(true).add(R.id.book_detail_fragment_container_view, BookDetailFragment.class, bundle).commit();
       });
-
     });
   }
 
@@ -111,14 +109,12 @@ public class MainActivity extends AppCompatActivity {
   protected void onStart() {
     super.onStart();
     if (!mUserViewModel.isLoggedIn()) {
-
-//      startActivity(LoginActivity.getIntent(getApplicationContext()));
+      // user not logged in -> redirect to LoginActivity
 
       Intent intent = new Intent(MainActivity.this, LoginActivity.class);
       startActivityForResult(intent, LOGIN_ACTIVITY_REQUEST_CODE);
     } else {
-
-//  this.mUserViewModel = new ViewModelProvider(this).get(LoggedInUserView.class);
+      // user is logged in -> display user name
       User user = mUserViewModel.getUser();
 
       binding.welcomeLabel.setText(

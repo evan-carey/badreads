@@ -60,6 +60,8 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/welcome_label"
     android:layout_marginTop="32dp"
-    />
+    >
+    <requestFocus />
+  </AutoCompleteTextView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
