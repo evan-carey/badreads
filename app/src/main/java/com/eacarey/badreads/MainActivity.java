@@ -11,13 +11,13 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-import com.eacarey.badreads.Models.BookViewModel;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.eacarey.badreads.Models.BookListViewModel;
 import com.eacarey.badreads.Models.UserViewModel;
 import com.eacarey.badreads.databinding.ActivityMainBinding;
+import com.eacarey.badreads.ui.booklist.BookListAdapter;
 import com.eacarey.badreads.ui.login.LoginActivity;
-import java.lang.reflect.Array;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
   ActivityMainBinding binding;
 
   private UserViewModel mUserViewModel;
-  private BookViewModel mBookViewModel;
+  private BookListViewModel mBookListViewModel;
 //  private BookDetailViewModel mBookDetailViewModel;
 
   private Button mAdminButton;
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     setContentView(binding.getRoot());
 
     mUserViewModel = new ViewModelProvider(this).get(UserViewModel.class);
-    mBookViewModel = new ViewModelProvider(this).get(BookViewModel.class);
+    mBookListViewModel = new ViewModelProvider(this).get(BookListViewModel.class);
 //    mBookDetailViewModel = new ViewModelProvider(this).get(BookDetailViewModel.class);
 
     // bind Logout button
@@ -59,6 +59,15 @@ public class MainActivity extends AppCompatActivity {
       startActivity(intent);
     });
 
+    // bind list view
+    RecyclerView bookListView = binding.recyclerview;
+    final BookListAdapter bookListAdapter = new BookListAdapter(new BookListAdapter.BookDiff());
+    bookListView.setAdapter(bookListAdapter);
+    bookListView.setLayoutManager(new LinearLayoutManager(this));
+//    Transformations.switchMap(this.mUserViewModel.getUser(),
+//            user -> this.mBookListViewModel.getUserBooks(user.getUsername()))
+    this.mBookListViewModel.getUserBooks().observe(this, bookListAdapter::submitList);
+
     // bind search
     this.mSearchBooksView = binding.searchBooksAutocomplete;
     this.mSearchBooksView.setThreshold(1);
@@ -69,15 +78,29 @@ public class MainActivity extends AppCompatActivity {
       }
     });
 
-    this.mBookViewModel.getAllBooks().observe(this, books -> {
-      // TODO: write custom ArrayAdapter so we can use Book objects (to search on title and author)
-      // https://stackoverflow.com/questions/16782288/autocompletetextview-with-custom-adapter-and-filter
-//      List<String> bookStrings = books.stream().map(Book::getTitle).collect(Collectors.toList());
+    this.mUserViewModel.getUser().observe(this, user -> {
+      boolean isLoggedIn = user != null;
+      if (!isLoggedIn) {
+        // user not logged in -> redirect to LoginActivity
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivityForResult(intent, LOGIN_ACTIVITY_REQUEST_CODE);
+      } else {
+        this.binding.welcomeLabel.setText(
+            String.format(getString(R.string.welcome_message), user.getUsername()));
+        this.mSearchBooksView.setText(null);
 
-//      ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-//          android.R.layout.simple_dropdown_item_1line, bookStrings);
-      ArrayAdapter<Book> adapter = new BooksArrayAdapter(this, R.layout.books_adapter_item, books);
-      this.mSearchBooksView.setAdapter(adapter);
+        if (user.getIsAdmin()) {
+          this.mAdminButton.setVisibility(View.VISIBLE);
+        } else {
+          this.mAdminButton.setVisibility(View.INVISIBLE);
+        }
+      }
+    });
+
+    this.mBookListViewModel.getAllBooks().observe(this, books -> {
+      final ArrayAdapter<Book> bookAutcompleteAdapter = new BookAutocompleteArrayAdapter(this,
+          R.layout.books_adapter_item, books);
+      this.mSearchBooksView.setAdapter(bookAutcompleteAdapter);
 
       this.mSearchBooksView.setOnItemSelectedListener(new OnItemSelectedListener() {
         @Override
@@ -111,35 +134,8 @@ public class MainActivity extends AppCompatActivity {
   @Override
   protected void onStart() {
     super.onStart();
-    if (!mUserViewModel.isLoggedIn()) {
-      // user not logged in -> redirect to LoginActivity
-
-      Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-      startActivityForResult(intent, LOGIN_ACTIVITY_REQUEST_CODE);
-    } else {
-      // user is logged in -> display user name
-      User user = mUserViewModel.getUser();
-
-      binding.welcomeLabel.setText(
-          String.format(getString(R.string.welcome_message), user.getUsername()));
-      this.mSearchBooksView.setText(null);
-
-      if (user.getIsAdmin()) {
-        this.mAdminButton.setVisibility(View.VISIBLE);
-      }
-    }
+    this.mSearchBooksView.setText(null);
   }
-
-//  public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//    super.onActivityResult(requestCode, resultCode, data);
-//
-//    // return from LoginActivity
-//    if (requestCode == LOGIN_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
-////      this.mUserViewModel = (LoggedInUserView) data.getParcelableExtra(LoginActivity.LOGIN_EXTRA_REPLY);
-////      binding.welcomeLabel.setText(
-////          String.format(getString(R.string.welcome_message), this.mUserViewModel.getDisplayName()));
-//    }
-//  }
 
   public static Intent getIntent(Context context) {
     return new Intent(context, MainActivity.class);

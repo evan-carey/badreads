@@ -1,7 +1,6 @@
 package com.eacarey.badreads;
 
 import android.app.Application;
-import android.util.Log;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -31,17 +30,21 @@ public class BookDetailViewModel extends AndroidViewModel {
   }
 
   public LiveData<UserBook> getUserBook() {
-    return Transformations.switchMap(this.mBook, book -> this.bookRepository.getUserBook(book, this.userRepository.getUser()));
+    return Transformations.switchMap(this.mBook,
+        book -> {
+          User user = this.userRepository.getUser().getValue();
+          return this.bookRepository.getUserBook(book, user);
+        });
   }
 
   public void addBookToWantToReadList() {
     this.bookRepository.addBookToWantToReadList(this.getBook().getValue(),
-        this.userRepository.getUser());
+        this.userRepository.getUser().getValue());
   }
 
   public void removeBookFromWantToReadList() {
     this.bookRepository.removeBookFromWantToReadList(this.getBook().getValue(),
-        this.userRepository.getUser());
+        this.userRepository.getUser().getValue());
   }
 
 }
