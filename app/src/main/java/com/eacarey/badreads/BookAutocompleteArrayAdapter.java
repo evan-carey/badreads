@@ -10,14 +10,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BooksArrayAdapter extends ArrayAdapter<Book> {
+public class BookAutocompleteArrayAdapter extends ArrayAdapter<Book> {
 
   Context context;
   int resource;
   //  int textViewResourceId;
   List<Book> mList, mListAll;
 
-  public BooksArrayAdapter(Context context, int resource,
+  public BookAutocompleteArrayAdapter(Context context, int resource,
       List<Book> bookList) {
     super(context, resource, bookList);
     this.context = context;

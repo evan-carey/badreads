@@ -11,13 +11,13 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-import com.eacarey.badreads.Models.BookViewModel;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.eacarey.badreads.Models.BookListViewModel;
 import com.eacarey.badreads.Models.UserViewModel;
 import com.eacarey.badreads.databinding.ActivityMainBinding;
+import com.eacarey.badreads.ui.booklist.BookListAdapter;
 import com.eacarey.badreads.ui.login.LoginActivity;
-import java.lang.reflect.Array;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
   ActivityMainBinding binding;
 
   private UserViewModel mUserViewModel;
-  private BookViewModel mBookViewModel;
+  private BookListViewModel mBookListViewModel;
 //  private BookDetailViewModel mBookDetailViewModel;
 
   private Button mAdminButton;
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     setContentView(binding.getRoot());
 
     mUserViewModel = new ViewModelProvider(this).get(UserViewModel.class);
-    mBookViewModel = new ViewModelProvider(this).get(BookViewModel.class);
+    mBookListViewModel = new ViewModelProvider(this).get(BookListViewModel.class);
 //    mBookDetailViewModel = new ViewModelProvider(this).get(BookDetailViewModel.class);
 
     // bind Logout button
@@ -69,15 +69,20 @@ public class MainActivity extends AppCompatActivity {
       }
     });
 
-    this.mBookViewModel.getAllBooks().observe(this, books -> {
-      // TODO: write custom ArrayAdapter so we can use Book objects (to search on title and author)
-      // https://stackoverflow.com/questions/16782288/autocompletetextview-with-custom-adapter-and-filter
-//      List<String> bookStrings = books.stream().map(Book::getTitle).collect(Collectors.toList());
+    // bind list view
+    RecyclerView bookListView = binding.recyclerview;
+    final BookListAdapter bookListAdapter = new BookListAdapter(new BookListAdapter.BookDiff());
+    bookListView.setAdapter(bookListAdapter);
+    bookListView.setLayoutManager(new LinearLayoutManager(this));
+    this.mBookListViewModel.getUserBooks(this.mUserViewModel.getUser().getUsername())
+        .observe(this, books -> {
+          bookListAdapter.submitList(books);
+        });
 
-//      ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-//          android.R.layout.simple_dropdown_item_1line, bookStrings);
-      ArrayAdapter<Book> adapter = new BooksArrayAdapter(this, R.layout.books_adapter_item, books);
-      this.mSearchBooksView.setAdapter(adapter);
+    this.mBookListViewModel.getAllBooks().observe(this, books -> {
+    final ArrayAdapter<Book> bookAutcompleteAdapter = new BookAutocompleteArrayAdapter(this,
+        R.layout.books_adapter_item, books);
+      this.mSearchBooksView.setAdapter(bookAutcompleteAdapter);
 
       this.mSearchBooksView.setOnItemSelectedListener(new OnItemSelectedListener() {
         @Override

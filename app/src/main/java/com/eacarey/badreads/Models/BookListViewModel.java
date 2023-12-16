@@ -7,11 +7,11 @@ import com.eacarey.badreads.Book;
 import com.eacarey.badreads.Repositories.BookRepository;
 import java.util.List;
 
-public class BookViewModel extends AndroidViewModel {
+public class BookListViewModel extends AndroidViewModel {
   private BookRepository mRepository;
   private final LiveData<List<Book>> mAllBooks;
 
-  public BookViewModel(Application app) {
+  public BookListViewModel(Application app) {
     super(app);
     this.mRepository = BookRepository.getInstance(app);
     this.mAllBooks = this.mRepository.getAllBooks();
@@ -19,6 +19,10 @@ public class BookViewModel extends AndroidViewModel {
 
   public LiveData<List<Book>> getAllBooks() {
     return this.mAllBooks;
+  }
+
+  public LiveData<List<Book>> getUserBooks(String username) {
+    return this.mRepository.getBooksByUser(username);
   }
 
   public void insert(Book... books) {
