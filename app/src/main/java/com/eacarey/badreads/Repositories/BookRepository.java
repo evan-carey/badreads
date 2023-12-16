@@ -6,6 +6,8 @@ import com.eacarey.badreads.Book;
 import com.eacarey.badreads.DB.AppDatabase;
 import com.eacarey.badreads.DB.BookDAO;
 import com.eacarey.badreads.DB.UserBookDAO;
+import com.eacarey.badreads.User;
+import com.eacarey.badreads.UserBook;
 import com.eacarey.badreads.UserBook.UserBookReadState;
 import java.util.List;
 
@@ -13,6 +15,7 @@ import java.util.List;
  * Singleton
  */
 public class BookRepository {
+
   private static volatile BookRepository instance;
 
   private BookDAO mBookDAO;
@@ -51,7 +54,24 @@ public class BookRepository {
     });
   }
 
+  public LiveData<UserBook> getUserBook(Book book, User user) {
+    return this.mUserBookDAO.getUserBook(book.getBookId(), user.getUserId());
+  }
+
   // TODO: add methods for 1. adding book to a list, 2. changing book state, 3. remove book from list
+  public void addBookToWantToReadList(Book book, User user) {
+    AppDatabase.databaseWriteExecutor.execute(() -> {
+      this.mUserBookDAO.insert(
+          new UserBook(user.getUserId(), book.getBookId(), UserBookReadState.WANT_TO_READ));
+    });
+  }
+
+  public void removeBookFromWantToReadList(Book book, User user) {
+    AppDatabase.databaseWriteExecutor.execute(() -> {
+      this.mUserBookDAO.delete(
+          new UserBook(user.getUserId(), book.getBookId(), UserBookReadState.WANT_TO_READ));
+    });
+  }
 
   public LiveData<List<Book>> getBooksByUser(String username) {
     return this.mUserBookDAO.getUserBooks(username);

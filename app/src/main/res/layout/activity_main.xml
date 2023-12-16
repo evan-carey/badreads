@@ -33,10 +33,6 @@
     app:layout_constraintTop_toBottomOf="@id/badreads_logo"
     android:layout_marginTop="16dp"
     />
-<!--  <androidx.fragment.app.FragmentContainerView-->
-<!--    android:id="@+id/book_detail_fragment_container_view"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent" />-->
 
   <Button
     android:id="@+id/log_out_button"
@@ -59,12 +55,13 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:hint="@string/search_books_autocomplete_label"
-    android:width="300dp"
+    android:width="@dimen/dimen_dropdown_view_width"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/welcome_label"
     android:layout_marginTop="32dp"
-    />
-
+    >
+    <requestFocus />
+  </AutoCompleteTextView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

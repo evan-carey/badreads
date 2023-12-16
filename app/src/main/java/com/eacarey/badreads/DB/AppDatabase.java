@@ -12,7 +12,7 @@ import com.eacarey.badreads.UserBook;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Book.class, User.class, UserBook.class}, version = 1)
+@Database(entities = {Book.class, User.class, UserBook.class}, version = 1, exportSchema = true)
 public abstract class AppDatabase extends RoomDatabase {
 
   public static final String DATABASE_NAME = "Badreads.DB";

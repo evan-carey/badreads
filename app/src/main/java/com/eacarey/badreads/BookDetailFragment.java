@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+
 import com.eacarey.badreads.databinding.FragmentBookDetailBinding;
 
 public class BookDetailFragment extends Fragment {
@@ -44,12 +45,12 @@ public class BookDetailFragment extends Fragment {
   @Override
   public void onActivityCreated(@Nullable Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
-//    mViewModel = new ViewModelProvider(requireActivity()).get(BookDetailViewModel.class);
-//
-//    mViewModel.getBook().observe(getViewLifecycleOwner(), book -> {
-//      this.mTitle.setText(book.getTitle());
-//      this.mAuthor.setText(book.getAuthor());
-//    });
+    mViewModel = new ViewModelProvider(requireActivity()).get(BookDetailViewModel.class);
+
+    mViewModel.getBook().observe(getViewLifecycleOwner(), book -> {
+      this.mTitle.setText(book.getTitle());
+      this.mAuthor.setText(book.getAuthor());
+    });
   }
 
   @Override

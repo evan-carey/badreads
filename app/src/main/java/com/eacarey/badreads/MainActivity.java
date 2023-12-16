@@ -15,6 +15,7 @@ import com.eacarey.badreads.Models.BookViewModel;
 import com.eacarey.badreads.Models.UserViewModel;
 import com.eacarey.badreads.databinding.ActivityMainBinding;
 import com.eacarey.badreads.ui.login.LoginActivity;
+import java.lang.reflect.Array;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
   private UserViewModel mUserViewModel;
   private BookViewModel mBookViewModel;
-  private BookDetailViewModel mBookDetailViewModel;
+//  private BookDetailViewModel mBookDetailViewModel;
 
   private Button mAdminButton;
   private AutoCompleteTextView mSearchBooksView;
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     mUserViewModel = new ViewModelProvider(this).get(UserViewModel.class);
     mBookViewModel = new ViewModelProvider(this).get(BookViewModel.class);
-    mBookDetailViewModel = new ViewModelProvider(this).get(BookDetailViewModel.class);
+//    mBookDetailViewModel = new ViewModelProvider(this).get(BookDetailViewModel.class);
 
     // bind Logout button
     final Button logoutButton = this.binding.logOutButton;
@@ -60,26 +61,33 @@ public class MainActivity extends AppCompatActivity {
 
     // bind search
     this.mSearchBooksView = binding.searchBooksAutocomplete;
+    this.mSearchBooksView.setThreshold(1);
     // clear text on focus
     this.mSearchBooksView.setOnFocusChangeListener((v, hasFocus) -> {
-      if (hasFocus) mSearchBooksView.setText("");
+      if (hasFocus) {
+        mSearchBooksView.setText("");
+      }
     });
-
 
     this.mBookViewModel.getAllBooks().observe(this, books -> {
       // TODO: write custom ArrayAdapter so we can use Book objects (to search on title and author)
       // https://stackoverflow.com/questions/16782288/autocompletetextview-with-custom-adapter-and-filter
-      List<String> bookStrings = books.stream().map(Book::getTitle).collect(Collectors.toList());
-      ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-          android.R.layout.simple_dropdown_item_1line, bookStrings);
+//      List<String> bookStrings = books.stream().map(Book::getTitle).collect(Collectors.toList());
+
+//      ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+//          android.R.layout.simple_dropdown_item_1line, bookStrings);
+      ArrayAdapter<Book> adapter = new BooksArrayAdapter(this, R.layout.books_adapter_item, books);
       this.mSearchBooksView.setAdapter(adapter);
 
       this.mSearchBooksView.setOnItemSelectedListener(new OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
           String selected = parent.getItemAtPosition(position).toString();
-          mSearchBooksView.setText(selected);
-          mBookDetailViewModel.selectBook(selected);
+//          mSearchBooksView.setText(selected);
+//          mBookDetailViewModel.selectBook(selected);
+
+//          Intent intent = BookDetailActivity.getIntent(getApplicationContext());
+//          startActivity(intent);
         }
 
         @Override
@@ -88,15 +96,15 @@ public class MainActivity extends AppCompatActivity {
         }
       });
 
-      // TODO: navigate to BookDetail activity
-//      this.mSearchBooksView.setOnItemClickListener((parent, view, position, id) -> {
-//        String selected = parent.getItemAtPosition(position).toString();
+      // when user selects a book from the search, navigate to the BookDetailActivity
+      this.mSearchBooksView.setOnItemClickListener((parent, view, position, id) -> {
+        Book selected = (Book) parent.getItemAtPosition(position);
 //        mSearchBooksView.setText(selected);
 //        mBookDetailViewModel.selectBook(selected);
-//        Bundle bundle = new Bundle();
-//        getSupportFragmentManager().beginTransaction().setReorderingAllowed(true).add(R.id.book_detail_fragment_container_view, BookDetailFragment.class, bundle).commit();
-//      });
-
+        Intent intent = BookDetailActivity.getIntent(this);
+        intent.putExtra("book", selected);
+        startActivity(intent);
+      });
     });
   }
 
@@ -104,18 +112,17 @@ public class MainActivity extends AppCompatActivity {
   protected void onStart() {
     super.onStart();
     if (!mUserViewModel.isLoggedIn()) {
-
-//      startActivity(LoginActivity.getIntent(getApplicationContext()));
+      // user not logged in -> redirect to LoginActivity
 
       Intent intent = new Intent(MainActivity.this, LoginActivity.class);
       startActivityForResult(intent, LOGIN_ACTIVITY_REQUEST_CODE);
     } else {
-
-//  this.mUserViewModel = new ViewModelProvider(this).get(LoggedInUserView.class);
+      // user is logged in -> display user name
       User user = mUserViewModel.getUser();
 
       binding.welcomeLabel.setText(
           String.format(getString(R.string.welcome_message), user.getUsername()));
+      this.mSearchBooksView.setText(null);
 
       if (user.getIsAdmin()) {
         this.mAdminButton.setVisibility(View.VISIBLE);

@@ -51,19 +51,16 @@ public class LoginActivity extends AppCompatActivity {
     final Button signUpButton = binding.signUp;
     final ProgressBar loadingProgressBar = binding.loading;
 
-    mUserViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
-      @Override
-      public void onChanged(@Nullable LoginFormState loginFormState) {
-        if (loginFormState == null) {
-          return;
-        }
-        loginButton.setEnabled(loginFormState.isDataValid());
-        if (loginFormState.getUsernameError() != null) {
-          usernameEditText.setError(getString(loginFormState.getUsernameError()));
-        }
-        if (loginFormState.getPasswordError() != null) {
-          passwordEditText.setError(getString(loginFormState.getPasswordError()));
-        }
+    mUserViewModel.getLoginFormState().observe(this, loginFormState -> {
+      if (loginFormState == null) {
+        return;
+      }
+      loginButton.setEnabled(loginFormState.isDataValid());
+      if (loginFormState.getUsernameError() != null) {
+        usernameEditText.setError(getString(loginFormState.getUsernameError()));
+      }
+      if (loginFormState.getPasswordError() != null) {
+        passwordEditText.setError(getString(loginFormState.getPasswordError()));
       }
     });
 
