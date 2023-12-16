@@ -36,12 +36,10 @@ public class BookDetailActivity extends AppCompatActivity {
     this.mRemoveFromListButton = this.mBinding.bookDetailButtonRemoveFromList;
 
     Intent intent = getIntent();
-    String bookTitle = intent.getStringExtra("book_title");
-    mBookDetailViewModel.selectBook(bookTitle);
+    Book book = intent.getParcelableExtra("book");
+    mBookDetailViewModel.selectBook(book);
 
     this.mBookDetailViewModel.getUserBook().observe(this, userBook -> {
-      // FIXME: userBook is null when it shouldn't be. Something's up with the viewmodel livedata observer stuff
-      Log.d("userBook", userBook == null ? "null" : userBook.toString());
       if (userBook == null) {
         this.mAddToListButton.setEnabled(true);
         this.mRemoveFromListButton.setEnabled(false);

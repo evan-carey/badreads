@@ -22,7 +22,7 @@ public interface UserBookDAO {
   LiveData<List<Book>> getUserBooks(String username);
 
   @Query(
-      "SELECT ub.state, b.* FROM " + AppDatabase.BOOKS_TABLE + " b " +
+      "SELECT b.* FROM " + AppDatabase.BOOKS_TABLE + " b " +
           "JOIN " + AppDatabase.USER_BOOKS_TABLE + " ub ON b.mBookId = ub.bookId " +
           "JOIN " + AppDatabase.USERS_TABLE + " u ON ub.userId = u.mUserId " +
           "WHERE u.mUsername = :username AND ub.state = :state")
@@ -32,7 +32,7 @@ public interface UserBookDAO {
       "SELECT * FROM " + AppDatabase.USER_BOOKS_TABLE
           + " WHERE bookId = :bookId AND userId = :userId"
   )
-  LiveData<UserBook> getUserBook(int userId, int bookId);
+  LiveData<UserBook> getUserBook(int bookId, int userId);
 
   @Insert
   void insert(UserBook... userBooks);

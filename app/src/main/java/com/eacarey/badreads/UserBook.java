@@ -1,6 +1,7 @@
 package com.eacarey.badreads;
 
 import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 import com.eacarey.badreads.DB.AppDatabase;
 import java.util.Objects;
 
@@ -10,6 +11,11 @@ public class UserBook {
   public int userId;
   public int bookId;
   private UserBookReadState state = UserBookReadState.WANT_TO_READ;
+
+//  public UserBook(int userId, int bookId) {
+//    this.userId = userId;
+//    this.bookId = bookId;
+//  }
 
   public UserBook(int userId, int bookId, UserBookReadState state) {
     this.userId = userId;

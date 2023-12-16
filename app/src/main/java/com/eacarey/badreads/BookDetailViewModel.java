@@ -13,9 +13,7 @@ public class BookDetailViewModel extends AndroidViewModel {
 
   private BookRepository bookRepository;
   private UserRepository userRepository;
-  private LiveData<Book> mBook = new MutableLiveData<>();
-
-//  private MutableLiveData<UserBook> mUserBook = new MutableLiveData<>();
+  private MutableLiveData<Book> mBook = new MutableLiveData<>();
 
   public BookDetailViewModel(Application app) {
     super(app);
@@ -24,13 +22,8 @@ public class BookDetailViewModel extends AndroidViewModel {
 
   }
 
-  public void selectBook(String title) {
-//    Book book = this.bookRepository.getBookByTitle(title).getValue();
-    this.mBook = this.bookRepository.getBookByTitle(title);
-
-//    this.mUserBook = Transformations.switchMap(this.mBook,
-//        book -> this.bookRepository.getUserBook(book,
-//            this.userRepository.getUser()));
+  public void selectBook(Book book) {
+    this.mBook.setValue(book);
   }
 
   public LiveData<Book> getBook() {

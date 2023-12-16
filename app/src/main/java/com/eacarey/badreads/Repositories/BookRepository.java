@@ -60,13 +60,17 @@ public class BookRepository {
 
   // TODO: add methods for 1. adding book to a list, 2. changing book state, 3. remove book from list
   public void addBookToWantToReadList(Book book, User user) {
-    this.mUserBookDAO.insert(
-        new UserBook(user.getUserId(), book.getBookId(), UserBookReadState.WANT_TO_READ));
+    AppDatabase.databaseWriteExecutor.execute(() -> {
+      this.mUserBookDAO.insert(
+          new UserBook(user.getUserId(), book.getBookId(), UserBookReadState.WANT_TO_READ));
+    });
   }
 
   public void removeBookFromWantToReadList(Book book, User user) {
-    this.mUserBookDAO.delete(
-        new UserBook(user.getUserId(), book.getBookId(), UserBookReadState.WANT_TO_READ));
+    AppDatabase.databaseWriteExecutor.execute(() -> {
+      this.mUserBookDAO.delete(
+          new UserBook(user.getUserId(), book.getBookId(), UserBookReadState.WANT_TO_READ));
+    });
   }
 
   public LiveData<List<Book>> getBooksByUser(String username) {

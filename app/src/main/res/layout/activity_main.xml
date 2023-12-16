@@ -55,7 +55,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:hint="@string/search_books_autocomplete_label"
-    android:width="300dp"
+    android:width="@dimen/dimen_dropdown_view_width"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/welcome_label"
