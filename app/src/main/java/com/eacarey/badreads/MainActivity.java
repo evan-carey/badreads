@@ -59,6 +59,14 @@ public class MainActivity extends AppCompatActivity {
       startActivity(intent);
     });
 
+    // bind list view
+    RecyclerView bookListView = binding.recyclerview;
+    final BookListAdapter bookListAdapter = new BookListAdapter(new BookListAdapter.BookDiff());
+    bookListView.setAdapter(bookListAdapter);
+    bookListView.setLayoutManager(new LinearLayoutManager(this));
+    this.mBookListViewModel.getUserBooks(this.mUserViewModel.getUser().getUsername())
+        .observe(this, bookListAdapter::submitList);
+
     // bind search
     this.mSearchBooksView = binding.searchBooksAutocomplete;
     this.mSearchBooksView.setThreshold(1);
@@ -68,16 +76,6 @@ public class MainActivity extends AppCompatActivity {
         mSearchBooksView.setText("");
       }
     });
-
-    // bind list view
-    RecyclerView bookListView = binding.recyclerview;
-    final BookListAdapter bookListAdapter = new BookListAdapter(new BookListAdapter.BookDiff());
-    bookListView.setAdapter(bookListAdapter);
-    bookListView.setLayoutManager(new LinearLayoutManager(this));
-    this.mBookListViewModel.getUserBooks(this.mUserViewModel.getUser().getUsername())
-        .observe(this, books -> {
-          bookListAdapter.submitList(books);
-        });
 
     this.mBookListViewModel.getAllBooks().observe(this, books -> {
     final ArrayAdapter<Book> bookAutcompleteAdapter = new BookAutocompleteArrayAdapter(this,

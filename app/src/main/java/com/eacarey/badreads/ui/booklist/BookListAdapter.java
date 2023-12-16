@@ -10,6 +10,7 @@ public class BookListAdapter extends ListAdapter<Book, BookViewHolder> {
 
   public BookListAdapter(@NonNull DiffUtil.ItemCallback<Book> diffCallback) {
     super(diffCallback);
+    setHasStableIds(true);
   }
 
   @NonNull
@@ -21,7 +22,7 @@ public class BookListAdapter extends ListAdapter<Book, BookViewHolder> {
   @Override
   public void onBindViewHolder(@NonNull BookViewHolder holder, int position) {
     Book current = getItem(position);
-    holder.bind(current.toString());
+    holder.bind(current);
   }
 
   public static class BookDiff extends DiffUtil.ItemCallback<Book> {
