@@ -64,8 +64,9 @@ public class MainActivity extends AppCompatActivity {
     final BookListAdapter bookListAdapter = new BookListAdapter(new BookListAdapter.BookDiff());
     bookListView.setAdapter(bookListAdapter);
     bookListView.setLayoutManager(new LinearLayoutManager(this));
-    this.mBookListViewModel.getUserBooks(this.mUserViewModel.getUser().getUsername())
-        .observe(this, bookListAdapter::submitList);
+//    Transformations.switchMap(this.mUserViewModel.getUser(),
+//            user -> this.mBookListViewModel.getUserBooks(user.getUsername()))
+    this.mBookListViewModel.getUserBooks().observe(this, bookListAdapter::submitList);
 
     // bind search
     this.mSearchBooksView = binding.searchBooksAutocomplete;
@@ -77,9 +78,28 @@ public class MainActivity extends AppCompatActivity {
       }
     });
 
+    this.mUserViewModel.getUser().observe(this, user -> {
+      boolean isLoggedIn = user != null;
+      if (!isLoggedIn) {
+        // user not logged in -> redirect to LoginActivity
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivityForResult(intent, LOGIN_ACTIVITY_REQUEST_CODE);
+      } else {
+        this.binding.welcomeLabel.setText(
+            String.format(getString(R.string.welcome_message), user.getUsername()));
+        this.mSearchBooksView.setText(null);
+
+        if (user.getIsAdmin()) {
+          this.mAdminButton.setVisibility(View.VISIBLE);
+        } else {
+          this.mAdminButton.setVisibility(View.INVISIBLE);
+        }
+      }
+    });
+
     this.mBookListViewModel.getAllBooks().observe(this, books -> {
-    final ArrayAdapter<Book> bookAutcompleteAdapter = new BookAutocompleteArrayAdapter(this,
-        R.layout.books_adapter_item, books);
+      final ArrayAdapter<Book> bookAutcompleteAdapter = new BookAutocompleteArrayAdapter(this,
+          R.layout.books_adapter_item, books);
       this.mSearchBooksView.setAdapter(bookAutcompleteAdapter);
 
       this.mSearchBooksView.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -114,35 +134,8 @@ public class MainActivity extends AppCompatActivity {
   @Override
   protected void onStart() {
     super.onStart();
-    if (!mUserViewModel.isLoggedIn()) {
-      // user not logged in -> redirect to LoginActivity
-
-      Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-      startActivityForResult(intent, LOGIN_ACTIVITY_REQUEST_CODE);
-    } else {
-      // user is logged in -> display user name
-      User user = mUserViewModel.getUser();
-
-      binding.welcomeLabel.setText(
-          String.format(getString(R.string.welcome_message), user.getUsername()));
-      this.mSearchBooksView.setText(null);
-
-      if (user.getIsAdmin()) {
-        this.mAdminButton.setVisibility(View.VISIBLE);
-      }
-    }
+    this.mSearchBooksView.setText(null);
   }
-
-//  public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//    super.onActivityResult(requestCode, resultCode, data);
-//
-//    // return from LoginActivity
-//    if (requestCode == LOGIN_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
-////      this.mUserViewModel = (LoggedInUserView) data.getParcelableExtra(LoginActivity.LOGIN_EXTRA_REPLY);
-////      binding.welcomeLabel.setText(
-////          String.format(getString(R.string.welcome_message), this.mUserViewModel.getDisplayName()));
-//    }
-//  }
 
   public static Intent getIntent(Context context) {
     return new Intent(context, MainActivity.class);

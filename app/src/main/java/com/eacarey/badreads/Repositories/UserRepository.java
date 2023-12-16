@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import com.eacarey.badreads.DB.AppDatabase;
 import com.eacarey.badreads.DB.UserDAO;
 import com.eacarey.badreads.R;
@@ -24,7 +25,7 @@ public class UserRepository {
   // If user credentials will be cached in local storage, it is recommended it be encrypted
   // @see https://developer.android.com/training/articles/keystore
   // logged in user
-  private User user = null;
+  private MutableLiveData<User> user = new MutableLiveData<>();
 
   private SharedPreferences mSharedPref;
   private String mSharedPrefUsernameKey;
@@ -50,21 +51,17 @@ public class UserRepository {
     return instance;
   }
 
-  public boolean isLoggedIn() {
-    return user != null;
-  }
-
   public void logout() {
-    user = null;
+    user.setValue(null);
     this.mSharedPref.edit().clear().apply();
   }
 
-  public User getUser() {
+  public LiveData<User> getUser() {
     return this.user;
   }
 
   private void setLoggedInUser(User user) {
-    this.user = user;
+    this.user.setValue(user);
     // If user credentials will be cached in local storage, it is recommended it be encrypted
     // @see https://developer.android.com/training/articles/keystore
     Editor editor = this.mSharedPref.edit();
@@ -83,12 +80,6 @@ public class UserRepository {
     User foundUser = result;
     setLoggedInUser(foundUser);
     return new Result.Success<User>(foundUser);
-
-//    Result<User> result = dataSource.login(username, password);
-//    if (result instanceof Result.Success) {
-//      setLoggedInUser(((Result.Success<User>) result).getData());
-//    }
-//    return result;
   }
 
   public Result<User> createUserAccount(String username, String password) {

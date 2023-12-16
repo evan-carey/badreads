@@ -4,12 +4,14 @@ import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 import com.eacarey.badreads.R;
 import com.eacarey.badreads.Repositories.UserRepository;
 import com.eacarey.badreads.User;
 import com.eacarey.badreads.data.Result;
 import com.eacarey.badreads.ui.login.LoginFormState;
 import com.eacarey.badreads.data.AuthResult;
+import java.util.Objects;
 
 public class UserViewModel extends AndroidViewModel {
 
@@ -70,11 +72,11 @@ public class UserViewModel extends AndroidViewModel {
     return password != null && password.trim().length() > 5;
   }
 
-  public User getUser() {
+  public LiveData<User> getUser() {
     return this.mUserRepository.getUser();
   }
 
-  public boolean isLoggedIn() {
-    return this.mUserRepository.isLoggedIn();
+  public LiveData<Boolean> isLoggedIn() {
+    return Transformations.map(this.getUser(), Objects::nonNull);
   }
 }
